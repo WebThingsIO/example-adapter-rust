@@ -1,0 +1,30 @@
+{
+  "manifest_version": 1,
+  "id": "example-adapter-rust",
+  "name": "Example Adapter",
+  "short_name": "Example Adapter",
+  "version": "1.0.0-alpha.1",
+  "description": "Example adapter add-on for WebThings Gateway\n",
+  "homepage_url": "https://github.com/WebThingsIO/example-adapter-rust#readme",
+  "license": "MPL-2.0",
+  "author": "WebThingsIO",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{path}/example-adapter-rust {path}",
+      "strict_min_version": "1.0.0",
+      "strict_max_version": "*",
+      "primary_type": "adapter"
+    }
+  },
+  "options": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "updateInterval": {
+          "type": "number",
+          "title": "Update interval in milliseconds"
+        }
+      }
+    }
+  }
+}
