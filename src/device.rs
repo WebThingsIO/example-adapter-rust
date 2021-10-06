@@ -5,28 +5,29 @@
  */
 use crate::property::RandomProperty;
 use async_trait::async_trait;
-use gateway_addon_rust::device::{Device, DeviceHandle};
+use gateway_addon_rust::{
+    adapter::DeviceBuilder,
+    device::{Device, DeviceHandle},
+};
 use std::collections::BTreeMap;
 use webthings_gateway_ipc_types::Device as DeviceDescription;
 
-pub struct RandomDevice {
-    device_handle: DeviceHandle,
+pub struct RandomDeviceBuilder {
+    update_interval: u64,
 }
 
-impl RandomDevice {
-    pub fn new(mut device_handle: DeviceHandle, update_interval: u64) -> Self {
-        let description = RandomProperty::build_description();
+impl RandomDeviceBuilder {
+    pub fn new(update_interval: u64) -> Self {
+        Self { update_interval }
+    }
+}
 
-        device_handle.add_property(
-            description.name.clone().unwrap(),
-            description,
-            |property_handle| RandomProperty::new(property_handle, update_interval),
-        );
-
-        Self { device_handle }
+impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
+    fn build(self, device_handle: DeviceHandle) -> RandomDevice {
+        RandomDevice::new(device_handle, self.update_interval)
     }
 
-    pub fn build_description() -> DeviceDescription {
+    fn description(&self) -> DeviceDescription {
         let mut property_descriptions = BTreeMap::new();
 
         let description = RandomProperty::build_description();
@@ -50,7 +51,25 @@ impl RandomDevice {
     }
 }
 
-#[async_trait(?Send)]
+pub struct RandomDevice {
+    device_handle: DeviceHandle,
+}
+
+impl RandomDevice {
+    pub fn new(mut device_handle: DeviceHandle, update_interval: u64) -> Self {
+        let description = RandomProperty::build_description();
+
+        device_handle.add_property(
+            description.name.clone().unwrap(),
+            description,
+            |property_handle| RandomProperty::new(property_handle, update_interval),
+        );
+
+        Self { device_handle }
+    }
+}
+
+#[async_trait]
 impl Device for RandomDevice {
     fn borrow_device_handle(&mut self) -> &mut DeviceHandle {
         &mut self.device_handle

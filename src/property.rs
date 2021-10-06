@@ -52,7 +52,7 @@ impl RandomProperty {
     }
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Property for RandomProperty {
     fn borrow_property_handle(&mut self) -> &mut PropertyHandle {
         &mut self.property_handle
