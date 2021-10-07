@@ -7,7 +7,7 @@ use async_trait::async_trait;
 use gateway_addon_rust::{
     adapter::PropertyBuilder,
     property::{Property, PropertyHandle},
-    property_description::{PropertyDescription, PropertyDescriptionBuilder},
+    property_description::{AtType, PropertyDescription, PropertyDescriptionBuilder, Type},
 };
 use serde_json::json;
 use serde_json::value::Value;
