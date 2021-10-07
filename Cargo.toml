@@ -25,4 +25,4 @@ features = ["derive"]
 
 [dependencies.gateway-addon-rust]
 git = "https://github.com/WebThingsIO/gateway-addon-rust"
-branch = "really-all-send"
+branch = "master"
