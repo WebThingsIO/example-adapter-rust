@@ -5,8 +5,7 @@
  */
 use async_trait::async_trait;
 use gateway_addon_rust::{
-    adapter::PropertyBuilder,
-    property::{Property, PropertyHandle},
+    property::{Property, PropertyBuilder, PropertyHandle},
     property_description::{AtType, PropertyDescription, PropertyDescriptionBuilder, Type},
 };
 use serde_json::json;
@@ -27,7 +26,6 @@ impl PropertyBuilder for RandomPropertyBuilder {
     fn description(&self) -> PropertyDescription {
         PropertyDescription::default()
             .at_type(AtType::LevelProperty)
-            .name("random")
             .title("Random")
             .description("Property with random values")
             .type_(Type::Integer)
@@ -41,6 +39,10 @@ impl PropertyBuilder for RandomPropertyBuilder {
 
     fn build(self: Box<Self>, property_handle: PropertyHandle) -> Box<dyn Property> {
         Box::new(RandomProperty::new(property_handle, self.update_interval))
+    }
+
+    fn name(&self) -> String {
+        "random".to_owned()
     }
 }
 
@@ -69,7 +71,7 @@ impl RandomProperty {
 
 #[async_trait]
 impl Property for RandomProperty {
-    fn borrow_property_handle(&mut self) -> &mut PropertyHandle {
+    fn property_handle_mut(&mut self) -> &mut PropertyHandle {
         &mut self.property_handle
     }
 

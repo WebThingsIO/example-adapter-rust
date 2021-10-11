@@ -6,11 +6,10 @@
 use crate::property::RandomPropertyBuilder;
 use async_trait::async_trait;
 use gateway_addon_rust::{
-    adapter::{DeviceBuilder, PropertyBuilder},
-    device::{Device, DeviceHandle},
-    device_description::DeviceDescription,
+    device::{Device, DeviceBuilder, DeviceHandle},
+    device_description::{AtType, DeviceDescription, DeviceDescriptionBuilder},
+    property::PropertyBuilder,
 };
-use std::collections::HashMap;
 
 pub struct RandomDeviceBuilder {
     update_interval: u64,
@@ -27,13 +26,8 @@ impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
         RandomDevice::new(device_handle)
     }
 
-    fn properties(&self) -> HashMap<String, Box<dyn PropertyBuilder>> {
-        let mut properties: HashMap<String, Box<dyn PropertyBuilder>> = HashMap::new();
-        properties.insert(
-            "random".to_owned(),
-            Box::new(RandomPropertyBuilder::new(self.update_interval)),
-        );
-        properties
+    fn properties(&self) -> Vec<Box<dyn PropertyBuilder>> {
+        vec![Box::new(RandomPropertyBuilder::new(self.update_interval))]
     }
 
     fn id(&self) -> String {
@@ -41,16 +35,10 @@ impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
     }
 
     fn description(&self) -> DeviceDescription {
-        DeviceDescription {
-            at_context: None,
-            at_type: Some(vec![String::from("MultiLevelSensor")]),
-            title: Some(String::from("Random")),
-            description: Some(String::from("A device with a random property")),
-            links: None,
-            base_href: None,
-            pin: None,
-            credentials_required: None,
-        }
+        DeviceDescription::default()
+            .at_type(AtType::MultiLevelSensor)
+            .title("random")
+            .description("A device with a random property")
     }
 }
 
@@ -66,7 +54,7 @@ impl RandomDevice {
 
 #[async_trait]
 impl Device for RandomDevice {
-    fn borrow_device_handle(&mut self) -> &mut DeviceHandle {
+    fn device_handle_mut(&mut self) -> &mut DeviceHandle {
         &mut self.device_handle
     }
 }

@@ -43,7 +43,7 @@ impl ExampleAdapter {
 }
 
 impl Adapter for ExampleAdapter {
-    fn get_adapter_handle(&mut self) -> &mut AdapterHandle {
+    fn adapter_handle_mut(&mut self) -> &mut AdapterHandle {
         &mut self.adapter_handle
     }
 }
