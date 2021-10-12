@@ -3,56 +3,58 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
-use crate::property::RandomProperty;
+use crate::property::RandomPropertyBuilder;
 use async_trait::async_trait;
-use gateway_addon_rust::device::{Device, DeviceHandle};
-use std::collections::BTreeMap;
-use webthings_gateway_ipc_types::Device as DeviceDescription;
+use gateway_addon_rust::{
+    device::{Device, DeviceBuilder, DeviceHandle},
+    device_description::{AtType, DeviceDescription, DeviceDescriptionBuilder},
+    property::PropertyBuilder,
+};
+
+pub struct RandomDeviceBuilder {
+    update_interval: u64,
+}
+
+impl RandomDeviceBuilder {
+    pub fn new(update_interval: u64) -> Self {
+        Self { update_interval }
+    }
+}
+
+impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
+    fn build(self, device_handle: DeviceHandle) -> RandomDevice {
+        RandomDevice::new(device_handle)
+    }
+
+    fn properties(&self) -> Vec<Box<dyn PropertyBuilder>> {
+        vec![Box::new(RandomPropertyBuilder::new(self.update_interval))]
+    }
+
+    fn id(&self) -> String {
+        "random".to_owned()
+    }
+
+    fn description(&self) -> DeviceDescription {
+        DeviceDescription::default()
+            .at_type(AtType::MultiLevelSensor)
+            .title("random")
+            .description("A device with a random property")
+    }
+}
 
 pub struct RandomDevice {
     device_handle: DeviceHandle,
 }
 
 impl RandomDevice {
-    pub fn new(mut device_handle: DeviceHandle, update_interval: u64) -> Self {
-        let description = RandomProperty::build_description();
-
-        device_handle.add_property(
-            description.name.clone().unwrap(),
-            description,
-            |property_handle| RandomProperty::new(property_handle, update_interval),
-        );
-
+    pub fn new(device_handle: DeviceHandle) -> Self {
         Self { device_handle }
-    }
-
-    pub fn build_description() -> DeviceDescription {
-        let mut property_descriptions = BTreeMap::new();
-
-        let description = RandomProperty::build_description();
-
-        property_descriptions.insert(description.name.clone().unwrap(), description);
-
-        DeviceDescription {
-            at_context: None,
-            at_type: Some(vec![String::from("MultiLevelSensor")]),
-            id: String::from("random"),
-            title: Some(String::from("Random")),
-            description: Some(String::from("A device with a random property")),
-            properties: Some(property_descriptions),
-            actions: None,
-            events: None,
-            links: None,
-            base_href: None,
-            pin: None,
-            credentials_required: None,
-        }
     }
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Device for RandomDevice {
-    fn borrow_device_handle(&mut self) -> &mut DeviceHandle {
+    fn device_handle_mut(&mut self) -> &mut DeviceHandle {
         &mut self.device_handle
     }
 }

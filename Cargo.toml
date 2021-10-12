@@ -25,4 +25,4 @@ features = ["derive"]
 
 [dependencies.gateway-addon-rust]
 git = "https://github.com/WebThingsIO/gateway-addon-rust"
-branch = "cloneable-handles"
+branch = "master"

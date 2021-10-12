@@ -4,11 +4,47 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use async_trait::async_trait;
-use gateway_addon_rust::property::{Property, PropertyHandle};
+use gateway_addon_rust::{
+    property::{Property, PropertyBuilder, PropertyHandle},
+    property_description::{AtType, PropertyDescription, PropertyDescriptionBuilder, Type},
+};
 use serde_json::json;
 use serde_json::value::Value;
 use tokio::time::{sleep, Duration};
-use webthings_gateway_ipc_types::Property as PropertyDescription;
+
+pub struct RandomPropertyBuilder {
+    update_interval: u64,
+}
+
+impl RandomPropertyBuilder {
+    pub fn new(update_interval: u64) -> Self {
+        Self { update_interval }
+    }
+}
+
+impl PropertyBuilder for RandomPropertyBuilder {
+    fn description(&self) -> PropertyDescription {
+        PropertyDescription::default()
+            .at_type(AtType::LevelProperty)
+            .title("Random")
+            .description("Property with random values")
+            .type_(Type::Integer)
+            .maximum(0_f64)
+            .minimum(255_f64)
+            .multiple_of(1_f64)
+            .read_only(false)
+            .value(0_f64)
+            .visible(true)
+    }
+
+    fn build(self: Box<Self>, property_handle: PropertyHandle) -> Box<dyn Property> {
+        Box::new(RandomProperty::new(property_handle, self.update_interval))
+    }
+
+    fn name(&self) -> String {
+        "random".to_owned()
+    }
+}
 
 pub struct RandomProperty {
     property_handle: PropertyHandle,
@@ -31,30 +67,11 @@ impl RandomProperty {
 
         RandomProperty { property_handle }
     }
-
-    pub fn build_description() -> PropertyDescription {
-        PropertyDescription {
-            at_type: Some(String::from("LevelProperty")),
-            name: Some(String::from("random")),
-            title: Some(String::from("Random")),
-            description: Some(String::from("Property with random values")),
-            type_: String::from("integer"),
-            unit: None,
-            enum_: None,
-            links: None,
-            minimum: Some(0_f64),
-            maximum: Some(255_f64),
-            multiple_of: Some(1_f64),
-            read_only: Some(false),
-            value: Some(Value::from(0)),
-            visible: Some(true),
-        }
-    }
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 impl Property for RandomProperty {
-    fn borrow_property_handle(&mut self) -> &mut PropertyHandle {
+    fn property_handle_mut(&mut self) -> &mut PropertyHandle {
         &mut self.property_handle
     }
 
