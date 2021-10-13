@@ -22,14 +22,6 @@ impl RandomDeviceBuilder {
 }
 
 impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
-    fn build(self, device_handle: DeviceHandle) -> RandomDevice {
-        RandomDevice::new(device_handle)
-    }
-
-    fn properties(&self) -> Vec<Box<dyn PropertyBuilder>> {
-        vec![Box::new(RandomPropertyBuilder::new(self.update_interval))]
-    }
-
     fn id(&self) -> String {
         "random".to_owned()
     }
@@ -39,6 +31,14 @@ impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
             .at_type(AtType::MultiLevelSensor)
             .title("random")
             .description("A device with a random property")
+    }
+
+    fn properties(&self) -> Vec<Box<dyn PropertyBuilder>> {
+        vec![Box::new(RandomPropertyBuilder::new(self.update_interval))]
+    }
+
+    fn build(self, device_handle: DeviceHandle) -> RandomDevice {
+        RandomDevice::new(device_handle)
     }
 }
 
