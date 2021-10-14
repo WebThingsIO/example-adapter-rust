@@ -9,8 +9,6 @@ use gateway_addon_rust::{
     action::{Action, ActionHandle, NoInput},
     action_description::{ActionDescription, ActionDescriptionBuilder},
 };
-use schemars::JsonSchema;
-use serde::Deserialize;
 
 pub struct ClearAction {}
 
@@ -18,12 +16,6 @@ impl ClearAction {
     pub fn new() -> Self {
         ClearAction {}
     }
-}
-
-#[derive(Deserialize, JsonSchema, Debug)]
-pub struct A {
-    pub i: i32,
-    pub e: bool,
 }
 
 #[async_trait]

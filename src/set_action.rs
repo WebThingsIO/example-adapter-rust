@@ -8,8 +8,6 @@ use gateway_addon_rust::{
     action::{Action, ActionHandle},
     action_description::{ActionDescription, ActionDescriptionBuilder},
 };
-use schemars::JsonSchema;
-use serde::Deserialize;
 use serde_json::json;
 
 pub struct SetAction {}
@@ -18,12 +16,6 @@ impl SetAction {
     pub fn new() -> Self {
         SetAction {}
     }
-}
-
-#[derive(Deserialize, JsonSchema, Debug)]
-pub struct A {
-    pub i: i32,
-    pub e: bool,
 }
 
 #[async_trait]
