@@ -4,9 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use async_trait::async_trait;
-use gateway_addon_rust::{
-    property::{Property, PropertyBuilder, PropertyHandle},
-    property_description::{AtType, PropertyDescription, PropertyDescriptionBuilder, Type},
+use gateway_addon_rust::property::{Property, PropertyBuilder, PropertyHandle};
+use gateway_addon_rust::property_description::{
+    AtType, PropertyDescription, PropertyDescriptionBuilder, Type,
 };
 use serde_json::json;
 use serde_json::value::Value;
@@ -23,6 +23,10 @@ impl RandomPropertyBuilder {
 }
 
 impl PropertyBuilder for RandomPropertyBuilder {
+    fn name(&self) -> String {
+        "random".to_owned()
+    }
+
     fn description(&self) -> PropertyDescription {
         PropertyDescription::default()
             .at_type(AtType::LevelProperty)
@@ -39,10 +43,6 @@ impl PropertyBuilder for RandomPropertyBuilder {
 
     fn build(self: Box<Self>, property_handle: PropertyHandle) -> Box<dyn Property> {
         Box::new(RandomProperty::new(property_handle, self.update_interval))
-    }
-
-    fn name(&self) -> String {
-        "random".to_owned()
     }
 }
 
