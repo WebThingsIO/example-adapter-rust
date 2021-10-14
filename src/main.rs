@@ -4,14 +4,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 mod adapter;
+mod clear_action;
 mod config;
 mod device;
-mod property;
+mod random_property;
+mod set_action;
 
-use crate::adapter::ExampleAdapter;
-use crate::config::Config;
-use gateway_addon_rust::api_error::ApiError;
-use gateway_addon_rust::plugin::connect;
+use crate::{adapter::ExampleAdapter, config::Config};
+use gateway_addon_rust::{api_error::ApiError, plugin::connect};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 
@@ -44,7 +44,14 @@ async fn run() -> Result<(), ApiError> {
         )
         .await?;
 
-    let result = adapter.lock().await.init().await;
+    let result = adapter
+        .lock()
+        .await
+        .as_any_mut()
+        .downcast_mut::<ExampleAdapter>()
+        .unwrap()
+        .init()
+        .await;
 
     if let Err(err) = result {
         plugin
