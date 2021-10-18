@@ -36,7 +36,7 @@ impl Action for SetAction {
     ) -> Result<(), String> {
         action_handle.start().await.unwrap();
         let input = action_handle.input;
-        println!("performing set action with {:?}", input);
+        log::debug!("Performing set action with {:?}", input);
         if let Some(device) = action_handle.device.upgrade() {
             tokio::spawn(async move {
                 let mut device = device.lock().await;
@@ -50,7 +50,7 @@ impl Action for SetAction {
                 action_handle.finish().await.unwrap();
             });
         } else {
-            eprintln!("Failed to get device ref");
+            log::error!("Failed to get device ref");
             action_handle.finish().await.unwrap();
         }
         Ok(())

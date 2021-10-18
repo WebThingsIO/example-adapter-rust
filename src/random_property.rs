@@ -69,7 +69,7 @@ impl RandomProperty {
     }
 
     pub async fn clear(&mut self) {
-        println!("Clearing random property");
+        log::debug!("Clearing random property");
         if let Err(err) = self.property_handle.set_value(json!(0)).await {
             log::warn!("Failed to set random value: {}", err);
         }
