@@ -7,8 +7,10 @@ mod adapter;
 mod clear_action;
 mod config;
 mod device;
+mod random_event;
 mod random_property;
 mod set_action;
+mod value_event;
 
 use crate::{adapter::ExampleAdapter, config::Config};
 use gateway_addon_rust::{api_error::ApiError, plugin::connect};

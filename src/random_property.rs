@@ -5,9 +5,7 @@
  */
 use async_trait::async_trait;
 use gateway_addon_rust::property::{Property, PropertyBuilder, PropertyHandle};
-use gateway_addon_rust::property_description::{AtType, PropertyDescription, Type};
-use serde_json::json;
-use serde_json::value::Value;
+use gateway_addon_rust::property_description::{AtType, PropertyDescription};
 use tokio::time::{sleep, Duration};
 
 pub struct RandomPropertyBuilder {
@@ -22,36 +20,34 @@ impl RandomPropertyBuilder {
 
 impl PropertyBuilder for RandomPropertyBuilder {
     type Property = RandomProperty;
+    type Value = u8;
 
     fn name(&self) -> String {
         "random".to_owned()
     }
 
-    fn description(&self) -> PropertyDescription {
+    fn description(&self) -> PropertyDescription<Self::Value> {
         PropertyDescription::default()
             .at_type(AtType::LevelProperty)
             .title("Random")
             .description("Property with random values")
-            .type_(Type::Integer)
-            .maximum(255_f64)
-            .minimum(0_f64)
             .multiple_of(1_f64)
             .read_only(false)
-            .value(0_f64)
+            .value(0)
             .visible(true)
     }
 
-    fn build(self: Box<Self>, property_handle: PropertyHandle) -> Self::Property {
+    fn build(self: Box<Self>, property_handle: PropertyHandle<Self::Value>) -> Self::Property {
         RandomProperty::new(property_handle, self.update_interval)
     }
 }
 
 pub struct RandomProperty {
-    property_handle: PropertyHandle,
+    property_handle: PropertyHandle<u8>,
 }
 
 impl RandomProperty {
-    pub fn new(property_handle: PropertyHandle, update_interval: u64) -> Self {
+    pub fn new(property_handle: PropertyHandle<u8>, update_interval: u64) -> Self {
         let mut cloned_handle = property_handle.clone();
 
         tokio::spawn(async move {
@@ -59,7 +55,7 @@ impl RandomProperty {
             loop {
                 sleep(Duration::from_millis(update_interval)).await;
 
-                if let Err(err) = cloned_handle.set_value(json!(rand::random::<u8>())).await {
+                if let Err(err) = cloned_handle.set_value(rand::random::<u8>()).await {
                     log::warn!("Failed to set random value: {}", err);
                 }
             }
@@ -70,7 +66,7 @@ impl RandomProperty {
 
     pub async fn clear(&mut self) {
         log::debug!("Clearing random property");
-        if let Err(err) = self.property_handle.set_value(json!(0)).await {
+        if let Err(err) = self.property_handle.set_value(0).await {
             log::warn!("Failed to set random value: {}", err);
         }
     }
@@ -78,26 +74,31 @@ impl RandomProperty {
 
 #[async_trait]
 impl Property for RandomProperty {
-    fn property_handle_mut(&mut self) -> &mut PropertyHandle {
+    type Value = u8;
+
+    fn property_handle_mut(&mut self) -> &mut PropertyHandle<Self::Value> {
         &mut self.property_handle
     }
 
-    async fn on_update(&mut self, value: Value) -> Result<(), String> {
+    async fn on_update(&mut self, value: u8) -> Result<(), String> {
         let name = &self.property_handle.name;
         let old_value = &self.property_handle.description.value;
 
-        if let Value::Number(value) = value {
-            let value = value
-                .as_u64()
-                .ok_or(format!("Value {} for {} is not an u64", value, name))?
-                as u8;
+        log::debug!(
+            "Value of property {} changed from {:?} to {}",
+            name,
+            old_value,
+            value
+        );
 
-            log::debug!(
-                "Value of property {} changed from {:?} to {}",
-                name,
-                old_value,
-                value
-            );
+        if let Some(device) = self.property_handle.device.upgrade() {
+            device
+                .lock()
+                .await
+                .device_handle_mut()
+                .raise_event("value_event", None)
+                .await
+                .unwrap();
 
             Ok(())
         } else {
