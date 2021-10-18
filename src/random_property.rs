@@ -5,9 +5,7 @@
  */
 use async_trait::async_trait;
 use gateway_addon_rust::property::{Property, PropertyBuilder, PropertyHandle};
-use gateway_addon_rust::property_description::{
-    AtType, PropertyDescription, PropertyDescriptionBuilder, Type,
-};
+use gateway_addon_rust::property_description::{AtType, PropertyDescription, Type};
 use serde_json::json;
 use serde_json::value::Value;
 use tokio::time::{sleep, Duration};

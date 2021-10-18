@@ -10,7 +10,7 @@ use async_trait::async_trait;
 use gateway_addon_rust::{
     action::ActionBase,
     device::{Device, DeviceBuilder, DeviceHandle},
-    device_description::{AtType, DeviceDescription, DeviceDescriptionBuilder},
+    device_description::{AtType, DeviceDescription},
     property::PropertyBuilderBase,
 };
 

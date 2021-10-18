@@ -6,7 +6,7 @@
 use async_trait::async_trait;
 use gateway_addon_rust::{
     action::{Action, ActionHandle},
-    action_description::{ActionDescription, ActionDescriptionBuilder},
+    action_description::ActionDescription,
 };
 use serde_json::json;
 

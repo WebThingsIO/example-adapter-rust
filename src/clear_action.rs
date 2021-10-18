@@ -7,7 +7,7 @@ use crate::random_property::RandomProperty;
 use async_trait::async_trait;
 use gateway_addon_rust::{
     action::{Action, ActionHandle, NoInput},
-    action_description::{ActionDescription, ActionDescriptionBuilder},
+    action_description::ActionDescription,
 };
 
 pub struct ClearAction {}
