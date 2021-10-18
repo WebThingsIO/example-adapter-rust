@@ -3,12 +3,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
-use crate::property::RandomPropertyBuilder;
+use crate::{
+    clear_action::ClearAction, random_property::RandomPropertyBuilder, set_action::SetAction,
+};
 use async_trait::async_trait;
 use gateway_addon_rust::{
+    action::ActionBase,
     device::{Device, DeviceBuilder, DeviceHandle},
-    device_description::{AtType, DeviceDescription, DeviceDescriptionBuilder},
-    property::PropertyBuilder,
+    device_description::{AtType, DeviceDescription},
+    property::PropertyBuilderBase,
 };
 
 pub struct RandomDeviceBuilder {
@@ -21,7 +24,9 @@ impl RandomDeviceBuilder {
     }
 }
 
-impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
+impl DeviceBuilder for RandomDeviceBuilder {
+    type Device = RandomDevice;
+
     fn id(&self) -> String {
         "random".to_owned()
     }
@@ -33,11 +38,15 @@ impl DeviceBuilder<RandomDevice> for RandomDeviceBuilder {
             .description("A device with a random property")
     }
 
-    fn properties(&self) -> Vec<Box<dyn PropertyBuilder>> {
+    fn properties(&self) -> Vec<Box<dyn PropertyBuilderBase>> {
         vec![Box::new(RandomPropertyBuilder::new(self.update_interval))]
     }
 
-    fn build(self, device_handle: DeviceHandle) -> RandomDevice {
+    fn actions(&self) -> Vec<Box<dyn ActionBase>> {
+        vec![Box::new(ClearAction::new()), Box::new(SetAction::new())]
+    }
+
+    fn build(self, device_handle: DeviceHandle) -> Self::Device {
         RandomDevice::new(device_handle)
     }
 }

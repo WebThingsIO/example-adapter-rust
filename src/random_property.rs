@@ -5,9 +5,7 @@
  */
 use async_trait::async_trait;
 use gateway_addon_rust::property::{Property, PropertyBuilder, PropertyHandle};
-use gateway_addon_rust::property_description::{
-    AtType, PropertyDescription, PropertyDescriptionBuilder, Type,
-};
+use gateway_addon_rust::property_description::{AtType, PropertyDescription, Type};
 use serde_json::json;
 use serde_json::value::Value;
 use tokio::time::{sleep, Duration};
@@ -23,6 +21,8 @@ impl RandomPropertyBuilder {
 }
 
 impl PropertyBuilder for RandomPropertyBuilder {
+    type Property = RandomProperty;
+
     fn name(&self) -> String {
         "random".to_owned()
     }
@@ -33,16 +33,16 @@ impl PropertyBuilder for RandomPropertyBuilder {
             .title("Random")
             .description("Property with random values")
             .type_(Type::Integer)
-            .maximum(0_f64)
-            .minimum(255_f64)
+            .maximum(255_f64)
+            .minimum(0_f64)
             .multiple_of(1_f64)
             .read_only(false)
             .value(0_f64)
             .visible(true)
     }
 
-    fn build(self: Box<Self>, property_handle: PropertyHandle) -> Box<dyn Property> {
-        Box::new(RandomProperty::new(property_handle, self.update_interval))
+    fn build(self: Box<Self>, property_handle: PropertyHandle) -> Self::Property {
+        RandomProperty::new(property_handle, self.update_interval)
     }
 }
 
@@ -66,6 +66,13 @@ impl RandomProperty {
         });
 
         RandomProperty { property_handle }
+    }
+
+    pub async fn clear(&mut self) {
+        println!("Clearing random property");
+        if let Err(err) = self.property_handle.set_value(json!(0)).await {
+            log::warn!("Failed to set random value: {}", err);
+        }
     }
 }
 
