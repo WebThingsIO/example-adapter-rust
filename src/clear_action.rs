@@ -35,7 +35,7 @@ impl Action for ClearAction {
         mut action_handle: ActionHandle<Self::Input>,
     ) -> Result<(), String> {
         action_handle.start().await.unwrap();
-        println!("performing clear action");
+        log::debug!("Performing clear action");
         if let Some(device) = action_handle.device.upgrade() {
             tokio::spawn(async move {
                 let mut device = device.lock().await;
@@ -49,7 +49,7 @@ impl Action for ClearAction {
                 action_handle.finish().await.unwrap();
             });
         } else {
-            eprintln!("Failed to get device ref");
+            log::error!("Failed to get device ref");
             action_handle.finish().await.unwrap();
         }
 
