@@ -4,8 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use async_trait::async_trait;
-use gateway_addon_rust::property::{Property, PropertyBuilder, PropertyHandle};
-use gateway_addon_rust::property_description::{AtType, PropertyDescription};
+use gateway_addon_rust::{
+    property::AtType, Property, PropertyBuilder, PropertyDescription, PropertyHandle,
+};
 use tokio::time::{sleep, Duration};
 
 pub struct RandomPropertyBuilder {
@@ -31,7 +32,7 @@ impl PropertyBuilder for RandomPropertyBuilder {
             .at_type(AtType::LevelProperty)
             .title("Random")
             .description("Property with random values")
-            .multiple_of(1_f64)
+            .multiple_of(1)
             .read_only(false)
             .value(0)
             .visible(true)
@@ -80,7 +81,7 @@ impl Property for RandomProperty {
         &mut self.property_handle
     }
 
-    async fn on_update(&mut self, value: u8) -> Result<(), String> {
+    async fn on_update(&mut self, value: Self::Value) -> Result<(), String> {
         let name = &self.property_handle.name;
         let old_value = &self.property_handle.description.value;
 

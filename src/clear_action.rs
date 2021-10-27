@@ -5,10 +5,7 @@
  */
 use crate::random_property::RandomProperty;
 use async_trait::async_trait;
-use gateway_addon_rust::{
-    action::{Action, ActionHandle},
-    action_description::{ActionDescription, NoInput},
-};
+use gateway_addon_rust::{action::NoInput, Action, ActionDescription, ActionHandle};
 
 pub struct ClearAction {}
 
