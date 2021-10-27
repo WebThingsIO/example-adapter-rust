@@ -4,10 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-use gateway_addon_rust::{
-    event::{Event, EventHandle},
-    event_description::EventDescription,
-};
+use gateway_addon_rust::{Event, EventDescription, EventHandle};
 use std::time::Duration;
 use tokio::time::sleep;
 

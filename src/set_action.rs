@@ -4,10 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use async_trait::async_trait;
-use gateway_addon_rust::{
-    action::{Action, ActionHandle},
-    action_description::ActionDescription,
-};
+use gateway_addon_rust::action::{Action, ActionDescription, ActionHandle};
 use serde_json::json;
 
 pub struct SetAction {}
@@ -44,7 +41,7 @@ impl Action for SetAction {
                 let mut property = property.lock().await;
                 property
                     .property_handle_mut()
-                    .set_value(json!(input))
+                    .set_value(Some(json!(input)))
                     .await
                     .unwrap();
                 action_handle.finish().await.unwrap();

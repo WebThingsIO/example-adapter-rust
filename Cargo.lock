@@ -32,6 +32,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "as-any"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b564204d863976c470dbd0e41d1fcc351a8cd1b58222aaaae466f82c493fae4"
+
+[[package]]
 name = "async-trait"
 version = "0.1.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -371,8 +377,9 @@ dependencies = [
 [[package]]
 name = "gateway-addon-rust"
 version = "1.0.0-alpha.1"
-source = "git+https://github.com/WebThingsIO/gateway-addon-rust?branch=master#c050dca98bbf216df747b920f2918945ea9d9cd1"
+source = "git+https://github.com/WebThingsIO/gateway-addon-rust?branch=master#b6b1c777491f9086e0af8f5a54c63ac1a06afebd"
 dependencies = [
+ "as-any",
  "async-trait",
  "chrono",
  "futures",

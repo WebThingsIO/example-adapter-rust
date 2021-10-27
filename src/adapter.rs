@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use crate::{config::Config, device::RandomDeviceBuilder};
-use gateway_addon_rust::adapter::{Adapter, AdapterHandle};
+use gateway_addon_rust::{Adapter, AdapterHandle};
 
 pub struct ExampleAdapter {
     adapter_handle: AdapterHandle,

@@ -13,7 +13,7 @@ mod set_action;
 mod value_event;
 
 use crate::{adapter::ExampleAdapter, config::Config};
-use gateway_addon_rust::{api_error::ApiError, plugin::connect};
+use gateway_addon_rust::{plugin::connect, ApiError};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
 

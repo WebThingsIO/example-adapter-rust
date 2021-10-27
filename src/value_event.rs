@@ -4,10 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-use gateway_addon_rust::{
-    event::Event,
-    event_description::{EventDescription, NoData},
-};
+use gateway_addon_rust::{event::NoData, Event, EventDescription};
 
 pub struct ValueEvent {}
 

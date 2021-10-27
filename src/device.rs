@@ -9,13 +9,8 @@ use crate::{
 };
 use async_trait::async_trait;
 use gateway_addon_rust::{
-    action::Actions,
-    actions,
-    device::{Device, DeviceBuilder, DeviceHandle},
-    device_description::{AtType, DeviceDescription},
-    event::Events,
-    events, properties,
-    property::Properties,
+    actions, device::AtType, events, properties, Actions, Device, DeviceBuilder, DeviceDescription,
+    DeviceHandle, Events, Properties,
 };
 
 pub struct RandomDeviceBuilder {
