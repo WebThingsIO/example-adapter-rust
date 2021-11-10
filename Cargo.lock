@@ -218,6 +218,7 @@ dependencies = [
 name = "example-adapter-rust"
 version = "1.0.0-alpha.1"
 dependencies = [
+ "as-any",
  "async-trait",
  "gateway-addon-rust",
  "log",

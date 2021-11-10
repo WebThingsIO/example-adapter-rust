@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use crate::random_property::RandomProperty;
+use as_any::Downcast;
 use async_trait::async_trait;
 use gateway_addon_rust::{action::NoInput, Action, ActionDescription, ActionHandle};
 
@@ -38,10 +39,7 @@ impl Action for ClearAction {
                 let mut device = device.lock().await;
                 let property = device.device_handle_mut().get_property("random").unwrap();
                 let mut property = property.lock().await;
-                let property = property
-                    .as_any_mut()
-                    .downcast_mut::<RandomProperty>()
-                    .unwrap();
+                let property = property.downcast_mut::<RandomProperty>().unwrap();
                 property.clear().await;
                 action_handle.finish().await.unwrap();
             });
