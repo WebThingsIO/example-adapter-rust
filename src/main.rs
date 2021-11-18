@@ -13,6 +13,7 @@ mod set_action;
 mod value_event;
 
 use crate::{adapter::ExampleAdapter, config::Config};
+use as_any::Downcast;
 use gateway_addon_rust::{plugin::connect, ApiError};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;
@@ -49,7 +50,6 @@ async fn run() -> Result<(), ApiError> {
     let result = adapter
         .lock()
         .await
-        .as_any_mut()
         .downcast_mut::<ExampleAdapter>()
         .unwrap()
         .init()
