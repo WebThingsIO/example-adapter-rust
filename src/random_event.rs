@@ -4,10 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-use gateway_addon_rust::{Event, EventDescription, EventHandle};
+use gateway_addon_rust::{event, Event, EventDescription, EventStructure};
 use std::time::Duration;
 use tokio::time::sleep;
 
+#[event]
 pub struct RandomEvent {
     update_interval: u64,
 }
@@ -18,7 +19,7 @@ impl RandomEvent {
     }
 }
 
-impl Event for RandomEvent {
+impl EventStructure for RandomEvent {
     type Data = u8;
 
     fn name(&self) -> String {
@@ -28,9 +29,12 @@ impl Event for RandomEvent {
     fn description(&self) -> EventDescription<Self::Data> {
         EventDescription::default()
     }
+}
 
-    fn init(&self, event_handle: EventHandle<Self::Data>) {
+impl Event for BuiltRandomEvent {
+    fn post_init(&mut self) {
         let update_interval = self.update_interval;
+        let event_handle = self.event_handle.clone();
         tokio::spawn(async move {
             log::debug!("Raising event every {} ms", update_interval);
             sleep(Duration::from_millis(update_interval / 2)).await;

@@ -4,8 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-use gateway_addon_rust::{event::NoData, Event, EventDescription};
+use gateway_addon_rust::{event, event::NoData, Event, EventDescription, EventStructure};
 
+#[event]
 pub struct ValueEvent {}
 
 impl ValueEvent {
@@ -14,7 +15,7 @@ impl ValueEvent {
     }
 }
 
-impl Event for ValueEvent {
+impl EventStructure for ValueEvent {
     type Data = NoData;
 
     fn name(&self) -> String {
@@ -27,3 +28,5 @@ impl Event for ValueEvent {
             .description("Raised whenever the value of random_property is updated")
     }
 }
+
+impl Event for BuiltValueEvent {}

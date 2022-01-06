@@ -378,14 +378,15 @@ dependencies = [
 [[package]]
 name = "gateway-addon-rust"
 version = "1.0.0-alpha.1"
-source = "git+https://github.com/WebThingsIO/gateway-addon-rust?branch=master#b6b1c777491f9086e0af8f5a54c63ac1a06afebd"
 dependencies = [
  "as-any",
  "async-trait",
  "chrono",
  "futures",
+ "gateway-addon-rust-codegen",
  "jsonschema",
  "log",
+ "mockall_double",
  "schemars",
  "serde",
  "serde_json",
@@ -396,6 +397,15 @@ dependencies = [
  "tungstenite",
  "url",
  "webthings-gateway-ipc-types",
+]
+
+[[package]]
+name = "gateway-addon-rust-codegen"
+version = "1.0.0-alpha.1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -689,6 +699,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9f1c5b025cda876f66ef43a113f91ebc9f4ccef34843000e0adf6ebbab84e21"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "mockall_double"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7dffc15b97456ecc84d2bde8c1df79145e154f45225828c4361f676e1b82acd6"
+dependencies = [
+ "cfg-if",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
