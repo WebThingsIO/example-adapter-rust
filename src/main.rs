@@ -12,11 +12,11 @@ mod random_property;
 mod set_action;
 mod value_event;
 
-use as_any::Downcast;
 use crate::{
     adapter::{BuiltExampleAdapter, ExampleAdapter},
     config::Config,
 };
+use as_any::Downcast;
 use gateway_addon_rust::{error::WebthingsError, plugin::connect};
 use log::LevelFilter;
 use simple_logger::SimpleLogger;

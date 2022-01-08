@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
-use as_any::Downcast;
 use crate::random_property::BuiltRandomProperty;
+use as_any::Downcast;
 use async_trait::async_trait;
 use gateway_addon_rust::{action::NoInput, Action, ActionDescription, ActionHandle};
 
