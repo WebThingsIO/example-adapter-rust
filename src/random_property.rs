@@ -5,22 +5,22 @@
  */
 use async_trait::async_trait;
 use gateway_addon_rust::{
-    property::AtType, Property, PropertyBuilder, PropertyDescription, PropertyHandle,
+    property, property::AtType, BuiltProperty, Property, PropertyDescription, PropertyStructure,
 };
 use tokio::time::{sleep, Duration};
 
-pub struct RandomPropertyBuilder {
+#[property]
+pub struct RandomProperty {
     update_interval: u64,
 }
 
-impl RandomPropertyBuilder {
+impl RandomProperty {
     pub fn new(update_interval: u64) -> Self {
         Self { update_interval }
     }
 }
 
-impl PropertyBuilder for RandomPropertyBuilder {
-    type Property = RandomProperty;
+impl PropertyStructure for RandomProperty {
     type Value = u8;
 
     fn name(&self) -> String {
@@ -37,19 +37,22 @@ impl PropertyBuilder for RandomPropertyBuilder {
             .value(0)
             .visible(true)
     }
+}
 
-    fn build(self: Box<Self>, property_handle: PropertyHandle<Self::Value>) -> Self::Property {
-        RandomProperty::new(property_handle, self.update_interval)
+impl BuiltRandomProperty {
+    pub async fn clear(&mut self) {
+        log::debug!("Clearing random property");
+        if let Err(err) = self.property_handle_mut().set_value(0).await {
+            log::warn!("Failed to set random value: {}", err);
+        }
     }
 }
 
-pub struct RandomProperty {
-    property_handle: PropertyHandle<u8>,
-}
-
-impl RandomProperty {
-    pub fn new(property_handle: PropertyHandle<u8>, update_interval: u64) -> Self {
-        let mut cloned_handle = property_handle.clone();
+#[async_trait]
+impl Property for BuiltRandomProperty {
+    fn post_init(&mut self) {
+        let mut cloned_handle = self.property_handle().clone();
+        let update_interval = self.update_interval;
 
         tokio::spawn(async move {
             log::debug!("Updating property every {} ms", update_interval);
@@ -61,24 +64,6 @@ impl RandomProperty {
                 }
             }
         });
-
-        RandomProperty { property_handle }
-    }
-
-    pub async fn clear(&mut self) {
-        log::debug!("Clearing random property");
-        if let Err(err) = self.property_handle.set_value(0).await {
-            log::warn!("Failed to set random value: {}", err);
-        }
-    }
-}
-
-#[async_trait]
-impl Property for RandomProperty {
-    type Value = u8;
-
-    fn property_handle_mut(&mut self) -> &mut PropertyHandle<Self::Value> {
-        &mut self.property_handle
     }
 
     async fn on_update(&mut self, value: Self::Value) -> Result<(), String> {
@@ -93,14 +78,15 @@ impl Property for RandomProperty {
         );
 
         if let Some(device) = self.property_handle.device.upgrade() {
-            device
-                .lock()
-                .await
-                .device_handle_mut()
-                .raise_event("value_event", None)
-                .await
-                .unwrap();
-
+            tokio::task::spawn(async move {
+                device
+                    .lock()
+                    .await
+                    .device_handle_mut()
+                    .raise_event("value_event", None)
+                    .await
+                    .unwrap();
+            });
             Ok(())
         } else {
             Err(format!("Value {} for {} is not a number", value, name))

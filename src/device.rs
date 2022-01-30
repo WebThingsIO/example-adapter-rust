@@ -4,28 +4,27 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 use crate::{
-    clear_action::ClearAction, random_event::RandomEvent, random_property::RandomPropertyBuilder,
+    clear_action::ClearAction, random_event::RandomEvent, random_property::RandomProperty,
     set_action::SetAction, value_event::ValueEvent,
 };
 use async_trait::async_trait;
 use gateway_addon_rust::{
-    actions, device::AtType, events, properties, Actions, Device, DeviceBuilder, DeviceDescription,
-    DeviceHandle, Events, Properties,
+    actions, device, device::AtType, events, properties, Actions, Device, DeviceDescription,
+    DeviceStructure, Events, Properties,
 };
 
-pub struct RandomDeviceBuilder {
+#[device]
+pub struct RandomDevice {
     update_interval: u64,
 }
 
-impl RandomDeviceBuilder {
+impl RandomDevice {
     pub fn new(update_interval: u64) -> Self {
         Self { update_interval }
     }
 }
 
-impl DeviceBuilder for RandomDeviceBuilder {
-    type Device = RandomDevice;
-
+impl DeviceStructure for RandomDevice {
     fn id(&self) -> String {
         "random".to_owned()
     }
@@ -38,7 +37,7 @@ impl DeviceBuilder for RandomDeviceBuilder {
     }
 
     fn properties(&self) -> Properties {
-        properties![RandomPropertyBuilder::new(self.update_interval)]
+        properties![RandomProperty::new(self.update_interval)]
     }
 
     fn actions(&self) -> Actions {
@@ -48,25 +47,7 @@ impl DeviceBuilder for RandomDeviceBuilder {
     fn events(&self) -> Events {
         events![RandomEvent::new(self.update_interval), ValueEvent::new()]
     }
-
-    fn build(self, device_handle: DeviceHandle) -> Self::Device {
-        RandomDevice::new(device_handle)
-    }
-}
-
-pub struct RandomDevice {
-    device_handle: DeviceHandle,
-}
-
-impl RandomDevice {
-    pub fn new(device_handle: DeviceHandle) -> Self {
-        Self { device_handle }
-    }
 }
 
 #[async_trait]
-impl Device for RandomDevice {
-    fn device_handle_mut(&mut self) -> &mut DeviceHandle {
-        &mut self.device_handle
-    }
-}
+impl Device for BuiltRandomDevice {}
